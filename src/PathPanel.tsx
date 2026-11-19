@@ -5,6 +5,7 @@ type Props = {
   fd: FD
   ubar: number | null
   rbar: { r: number; time: Record<Leg, number> } | null
+  gap: { short: number; wrongSignal: boolean } | null // null when the path repeats
   saved: (Cut & { id: number })[]
   hovered: number | null
   onHover: (id: number | null) => void
@@ -28,7 +29,7 @@ const cutText = (c: Cut) => (
 export default function PathPanel(p: Props) {
   const { ubar, rbar } = p
   const T = rbar ? Object.values(rbar.time).reduce((a, b) => a + b, 0) : 0
-  const cut = ubar !== null && rbar ? { u: ubar, r: rbar.r } : null
+  const cut = ubar !== null && rbar && p.gap === null ? { u: ubar, r: rbar.r } : null
   return (
     <div className={`path-panel${p.previewing ? ' previewing' : ''}`}>
       <FDPlot fd={p.fd} cut={cut} saved={p.saved} hovered={p.hovered} onHover={p.onHover} ringPoint={p.ringPoint} />
@@ -66,7 +67,13 @@ export default function PathPanel(p: Props) {
         </table>
       )}
       {cut ? <div className="readout">cut: {cutText(cut)}</div>
-        : <p className="hint">Draw a path to see its ū, r̄ and cut.</p>}
+        : ubar !== null && rbar && p.gap ? (
+          <p className="hint warn">
+            No cut yet: a path must repeat, so it has to last a whole number of cycles
+            {p.gap.wrongSignal ? ' and end at the same kind of signal it started at' : ''}.
+            {p.gap.short > 0 && <> It needs {s1(p.gap.short)} s more to finish this cycle.</>}
+          </p>
+        ) : <p className="hint">Draw a path to see its ū, r̄ and cut.</p>}
 
       {p.saved.length > 0 && (
         <>

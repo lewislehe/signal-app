@@ -159,3 +159,20 @@ export function phaseChanges(x: number, timing: Timing, T = T_MAX): number[] {
   const ends = greenIntervals(signalAt(x), timing, T).flat().filter((t) => t > 1e-9 && t < T - 1e-9)
   return [...redEnds(x, timing, T), ...ends].filter((t, i, a) => a.findIndex((u) => Math.abs(u - t) < 1e-9) === i)
 }
+
+/**
+ * A path gives a cut only if it can repeat: it lasts a whole number of cycles and ends at the same
+ * kind of signal it started at (with identical timings at both signals, either kind will do).
+ * Returns null if it repeats, or the seconds still needed to reach the next whole cycle.
+ */
+export function repeatGap(points: Pt[], { C, theta }: Timing): { short: number; wrongSignal: boolean } | null {
+  if (points.length < 2) return { short: C, wrongSignal: false }
+  const a = points[0], b = points[points.length - 1]
+  const T = b.t - a.t
+  const n = Math.round(T / C)
+  const whole = n >= 1 && Math.abs(T - n * C) < 1e-6
+  const same = signalAt(a.x) === signalAt(b.x) || Math.abs((((theta % C) + C) % C)) < 1e-9
+  if (whole && same) return null
+  const next = Math.max(1, Math.ceil(T / C - 1e-9)) * C
+  return { short: whole ? 0 : next - T, wrongSignal: !same }
+}

@@ -3,7 +3,7 @@ import TimeSpace from './TimeSpace'
 import Controls from './Controls'
 import PathPanel from './PathPanel'
 import RingRoad from './RingRoad'
-import { nextLegs, rbar, ubar, type FD, type Pt } from './model'
+import { nextLegs, rbar, repeatGap, ubar, type FD, type Pt } from './model'
 
 type Saved = { id: number; points: Pt[] }
 
@@ -28,12 +28,14 @@ export default function App() {
     ? [...points, ...nextLegs(points[points.length - 1], hover, fd)]
     : points
   const previewing = preview.length > points.length
-  const canSave = ubar(points) !== null && rbar(points, timing, fd) !== null
+  const canSave = ubar(points) !== null && rbar(points, timing, fd) !== null && repeatGap(points, timing) === null
+  const gap = repeatGap(preview, timing)
   const u = ubar(preview)
   const r = rbar(preview, timing, fd)
 
   // Saved paths keep their geometry; their cuts follow the current timing and FD.
   const savedCuts = saved.flatMap((s) => {
+    if (repeatGap(s.points, timing) !== null) return [] // no longer repeats under the current timing
     const su = ubar(s.points), sr = rbar(s.points, timing, fd)
     return su !== null && sr ? [{ id: s.id, u: su, r: sr.r }] : []
   })
@@ -98,7 +100,7 @@ export default function App() {
           <Controls C={C} ratio={ratio} theta={theta} fd={fd}
             setC={changeC} setRatio={setRatio} setTheta={setTheta} setFD={setFD} />
         </div>
-        <PathPanel fd={fd} ubar={u} rbar={r} previewing={previewing} saved={savedCuts} hovered={hovered} onHover={setHovered}
+        <PathPanel fd={fd} ubar={u} rbar={r} gap={gap} previewing={previewing} saved={savedCuts} hovered={hovered} onHover={setHovered}
           onSave={save} onClear={clear} onClearAll={() => { clear(); setSaved([]); setHovered(null) }} onDelete={(id) => { setSaved((ss) => ss.filter((s) => s.id !== id)); setHovered(null) }}
           hasPath={points.length > 0} canSave={canSave}
           ringPoint={ringQ === null ? null : { k: ringK, q: ringQ }}>
