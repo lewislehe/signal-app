@@ -34,13 +34,17 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
   const [resetCount, setResetCount] = useState(0)
   const speedRef = useRef(speed)
   speedRef.current = speed
-  const lastFlow = useRef<number | null>(null)
+  const steadyFlow = useRef<number | null>(null)
 
   // a fresh ring whenever the density, timing, or FD changes
   useEffect(() => {
     sim.current = new RingSim(k, timing, fd) // cars evenly spaced and at rest
-    lastFlow.current = null
-    onFlow(null)
+    // the long-run flow, from a hidden copy run past the start-up transient
+    const ahead = new RingSim(k, timing, fd)
+    ahead.advance(8 * timing.C)
+    const q = ahead.flow()
+    steadyFlow.current = q === null ? null : Math.round(q)
+    onFlow(steadyFlow.current)
     setFrame((f) => f + 1)
   }, [k, timing.C, timing.G, timing.theta, fd.vf, fd.w, fd.kj, resetCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -55,9 +59,6 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
         const steps = Math.floor(carry / s.dt)
         carry -= steps * s.dt
         for (let i = 0; i < steps; i++) s.step()
-        const q = s.flow()
-        const qr = q === null ? null : Math.round(q)
-        if (qr !== lastFlow.current) { lastFlow.current = qr; onFlow(qr) }
         if (steps > 0) setFrame((f) => f + 1)
       }
       last = now
@@ -69,7 +70,7 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
 
   const s = sim.current
   const t = s ? s.t : 0
-  const q = s ? s.flow() : null
+  const q = steadyFlow.current
 
   return (
     <div className="ring">
@@ -120,7 +121,7 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
             shown={`${k} veh/km (${s ? s.n : 0} cars)`} onChange={setK} />
           <div className="readout small">
             time in cycle = {(((t % timing.C) + timing.C) % timing.C).toFixed(0)} s<br />
-            measured <i>q</i> = {q === null ? 'after 5 cycles' : `${Math.round(q)} veh/hr`}
+            long-run <i>q</i> = {q === null ? '–' : `${q} veh/hr`}
           </div>
           <button className="btn" onClick={() => setResetCount((n) => n + 1)}>Reset cars</button>
           <div className="buttons">
@@ -128,7 +129,7 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
               <button key={v} className={`btn${v === speed ? ' primary' : ''}`} onClick={() => setSpeed(v)}>{v}×</button>
             ))}
           </div>
-          <p className="hint">Cars follow Newell's model. Reset spreads the cars out evenly. After five cycles, the flow measured over the last three is the dot on the FD plot.</p>
+          <p className="hint">Cars follow Newell's model. Reset spreads the cars out evenly. The dot on the FD plot is the flow this ring settles into, counted at signal 0 over three cycles once it has settled.</p>
         </div>
       </div>
     </div>
