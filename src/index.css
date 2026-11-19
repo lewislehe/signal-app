@@ -14,6 +14,7 @@ h1 { font-size: 1.4rem; font-weight: normal; margin: 0 0 12px; }
 .ts .last-dot:hover { stroke: rgba(0,0,0,.45); stroke-width: 1.2; }
 .ts .tick { font-size: 14px; }
 .ts .axis-label { font-size: 16px; }
+.ts .readout-label { font-size: 13px; fill: #222; paint-order: stroke; stroke: white; stroke-width: 4px; stroke-linejoin: round; }
 .ts .strip-label { font-size: 13px; fill: rgba(0,0,0,.6); }
 .ts .sig-label { font-size: 14px; fill: rgba(0,0,0,.7); }
 .ts .ubar-label { font-size: 15px; fill: rgba(0,0,0,.7); paint-order: stroke; stroke: white; stroke-width: 4px; stroke-linejoin: round; }

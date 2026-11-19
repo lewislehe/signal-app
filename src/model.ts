@@ -75,14 +75,14 @@ export function arrival(last: Pt, x: number, { vf, w }: FD): number {
   return last.t + (dx > 0 ? dx / (vf / 3.6) : -dx / (w / 3.6))
 }
 
-export const SNAP_T = 3 // s: how close a click must be to the end of a red to snap to it
+export const SNAP_T = 3 // s: how close a click must be to a phase change to snap to it
 
-/** Pull t to a nearby end of red at the click's signal, if the path can be there by then. */
+/** Pull t to a nearby phase change (end of a red or a green) at the click's signal, if the path can be there by then. */
 export function softSnap(p: Pt, last: Pt | undefined, timing: Timing, fd: FD): Pt {
   if (!last) return { t: phaseStart(p.x, p.t, timing), x: p.x }
   const earliest = last ? arrival(last, p.x, fd) : 0
   let best: number | null = null
-  for (const r of redEnds(p.x, timing)) {
+  for (const r of phaseChanges(p.x, timing)) {
     if (r < earliest - 1e-9 || Math.abs(r - p.t) > SNAP_T) continue
     if (best === null || Math.abs(r - p.t) < Math.abs(best - p.t)) best = r
   }
@@ -152,4 +152,10 @@ export function phaseStart(x: number, t: number, { C, G, theta }: Timing): numbe
   const into = (((t - g0) % C) + C) % C // time since the last green began
   const start = into < G ? t - into : t - into + G
   return Math.max(0, start)
+}
+
+/** Times in [0, T] when the signal at x changes phase (turns green or turns red). */
+export function phaseChanges(x: number, timing: Timing, T = T_MAX): number[] {
+  const ends = greenIntervals(signalAt(x), timing, T).flat().filter((t) => t > 1e-9 && t < T - 1e-9)
+  return [...redEnds(x, timing, T), ...ends].filter((t, i, a) => a.findIndex((u) => Math.abs(u - t) < 1e-9) === i)
 }

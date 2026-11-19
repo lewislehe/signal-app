@@ -84,7 +84,7 @@ export default function App() {
       <p className="hint intro">
         Click to place points. Each point snaps to a signal. From the last point, the path moves
         forward at <i>v<sub>f</sub></i> or backward at <i>w</i>, then rests until the time you
-        clicked. Clicks near the end of a red snap to it. Double-click to end the path. Right-click or shift-click the last dot to delete it; Escape clears the path; Enter saves it.
+        clicked. Clicks near a change of phase snap to it. Double-click to end the path. Right-click or shift-click the last dot to delete it; Escape clears the path; Enter saves it.
         Hover over a saved path to see it again.
       </p>
       <div className="layout">

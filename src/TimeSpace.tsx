@@ -225,10 +225,19 @@ export default function TimeSpace({ timing, fd, points, saved, shown, hover, end
       )}
 
       {/* where the next click lands */}
-      {hover && (
-        <circle cx={sx(ghost.length ? ghost[ghost.length - 1].t : hover.t)}
-          cy={sy(hover.x)} r={5} fill="none" stroke="black" strokeOpacity={0.5} strokeWidth={1.2} pointerEvents="none" />
-      )}
+      {hover && (() => {
+        const t = ghost.length ? ghost[ghost.length - 1].t : hover.t
+        const cx = sx(t), cy = sy(hover.x)
+        const right = cx < sx(T_MAX) - 150
+        return (
+          <g pointerEvents="none">
+            <circle cx={cx} cy={cy} r={5} fill="none" stroke="black" strokeOpacity={0.5} strokeWidth={1.2} />
+            <text x={cx + (right ? 10 : -10)} y={cy - 10} textAnchor={right ? 'start' : 'end'} className="readout-label">
+              <tspan fontStyle="italic">t</tspan> = {t.toFixed(1)} s, <tspan fontStyle="italic">x</tspan> = {hover.x} m
+            </text>
+          </g>
+        )
+      })()}
     </svg>
   )
 }
