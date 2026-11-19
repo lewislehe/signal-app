@@ -18,6 +18,7 @@ function Slider({ label, value, min, max, step, shown, onChange }: SliderProps) 
         <span className="value">{shown}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
+        style={{ '--pct': `${((value - min) / (max - min)) * 100}%` } as React.CSSProperties}
         onChange={(e) => onChange(Number(e.target.value))} />
     </label>
   )

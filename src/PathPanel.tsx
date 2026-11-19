@@ -32,9 +32,15 @@ export default function PathPanel(p: Props) {
       <FDPlot fd={p.fd} cut={cut} saved={p.saved} hovered={p.hovered} onHover={p.onHover} />
 
       <div className="buttons">
-        <button onClick={p.onSave} disabled={!p.canSave}>Save path (enter)</button>
-        <button onClick={p.onClear} disabled={!p.hasPath}>Cancel path (esc)</button>
-        <button onClick={p.onClearAll} disabled={!p.hasPath && p.saved.length === 0}>Clear all paths</button>
+        <button className="btn primary" onClick={p.onSave} disabled={!p.canSave}>
+          Save path <kbd>Enter</kbd>
+        </button>
+        <button className="btn" onClick={p.onClear} disabled={!p.hasPath}>
+          Cancel path <kbd>Esc</kbd>
+        </button>
+        <button className="btn quiet" onClick={p.onClearAll} disabled={!p.hasPath && p.saved.length === 0}>
+          Clear all paths
+        </button>
       </div>
 
       <h2>Path{p.previewing && <span className="preview-tag"> (with the next click)</span>}</h2>
