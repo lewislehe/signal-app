@@ -6,6 +6,7 @@ import { RingSim, isGreen } from './ringsim'
 const SIGRED = 'rgb(220,55,100)'
 const SIGGREEN = 'rgb(0,158,115)'
 const CAR = 'rgb(0,114,178)'
+const SPEEDS = [1, 4, 10, 25]
 
 const S = 260 // svg size
 const CX = S / 2
@@ -29,7 +30,7 @@ type Props = {
 export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
   const sim = useRef<RingSim | null>(null)
   const [, setFrame] = useState(0)
-  const [speed, setSpeed] = useState(1)
+  const [speed, setSpeed] = useState(10)
   const speedRef = useRef(speed)
   speedRef.current = speed
   const lastFlow = useRef<number | null>(null)
@@ -51,7 +52,7 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
     const tick = (now: number) => {
       const s = sim.current
       if (s) {
-        carry += Math.min((now - last) / 1000, 0.25) * speedRef.current
+        carry += Math.min((now - last) / 1000, 0.1) * speedRef.current
         const steps = Math.floor(carry / s.dt)
         carry -= steps * s.dt
         for (let i = 0; i < steps; i++) s.step()
@@ -122,9 +123,11 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
             time in cycle = {(((t % timing.C) + timing.C) % timing.C).toFixed(0)} s<br />
             measured <i>q</i> = {q === null ? '–' : `${Math.round(q)} veh/hr`}
           </div>
-          <button className="btn" onClick={() => setSpeed((v) => (v === 1 ? 4 : 1))}>
-            Speed {speed === 1 ? '1×' : '4×'}
-          </button>
+          <div className="buttons">
+            {SPEEDS.map((v) => (
+              <button key={v} className={`btn${v === speed ? ' primary' : ''}`} onClick={() => setSpeed(v)}>{v}×</button>
+            ))}
+          </div>
           <p className="hint">Cars follow Newell's model. The measured flow, over the last three cycles, is the dot on the FD plot.</p>
         </div>
       </div>

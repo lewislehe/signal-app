@@ -18,7 +18,7 @@ export default function App() {
   const [saved, setSaved] = useState<Saved[]>([])
   const [nextId, setNextId] = useState(1)
   const [hovered, setHovered] = useState<number | null>(null)
-  const [ringK, setRingK] = useState(40)
+  const [ringK, setRingK] = useState(80)
   const [ringQ, setRingQ] = useState<number | null>(null)
   const onRingFlow = useCallback((q: number | null) => setRingQ(q), [])
 
