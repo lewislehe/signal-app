@@ -31,19 +31,18 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
   const sim = useRef<RingSim | null>(null)
   const [, setFrame] = useState(0)
   const [speed, setSpeed] = useState(10)
+  const [resetCount, setResetCount] = useState(0)
   const speedRef = useRef(speed)
   speedRef.current = speed
   const lastFlow = useRef<number | null>(null)
 
   // a fresh ring whenever the density, timing, or FD changes
   useEffect(() => {
-    const fresh = new RingSim(k, timing, fd)
-    fresh.advance(5 * timing.C) // run past the start-up transient so the flow reads right away
-    sim.current = fresh
+    sim.current = new RingSim(k, timing, fd) // cars evenly spaced and at rest
     lastFlow.current = null
     onFlow(null)
     setFrame((f) => f + 1)
-  }, [k, timing.C, timing.G, timing.theta, fd.vf, fd.w, fd.kj]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [k, timing.C, timing.G, timing.theta, fd.vf, fd.w, fd.kj, resetCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     let raf = 0
@@ -121,14 +120,15 @@ export default function RingRoad({ timing, fd, k, setK, onFlow }: Props) {
             shown={`${k} veh/km (${s ? s.n : 0} cars)`} onChange={setK} />
           <div className="readout small">
             time in cycle = {(((t % timing.C) + timing.C) % timing.C).toFixed(0)} s<br />
-            measured <i>q</i> = {q === null ? '–' : `${Math.round(q)} veh/hr`}
+            measured <i>q</i> = {q === null ? 'after 5 cycles' : `${Math.round(q)} veh/hr`}
           </div>
+          <button className="btn" onClick={() => setResetCount((n) => n + 1)}>Reset cars</button>
           <div className="buttons">
             {SPEEDS.map((v) => (
               <button key={v} className={`btn${v === speed ? ' primary' : ''}`} onClick={() => setSpeed(v)}>{v}×</button>
             ))}
           </div>
-          <p className="hint">Cars follow Newell's model. The measured flow, over the last three cycles, is the dot on the FD plot.</p>
+          <p className="hint">Cars follow Newell's model. Reset spreads the cars out evenly. After five cycles, the flow measured over the last three is the dot on the FD plot.</p>
         </div>
       </div>
     </div>
