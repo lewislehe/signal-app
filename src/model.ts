@@ -79,6 +79,7 @@ export const SNAP_T = 3 // s: how close a click must be to the end of a red to s
 
 /** Pull t to a nearby end of red at the click's signal, if the path can be there by then. */
 export function softSnap(p: Pt, last: Pt | undefined, timing: Timing, fd: FD): Pt {
+  if (!last) return { t: phaseStart(p.x, p.t, timing), x: p.x }
   const earliest = last ? arrival(last, p.x, fd) : 0
   let best: number | null = null
   for (const r of redEnds(p.x, timing)) {
@@ -143,4 +144,12 @@ export function passPoints(points: Pt[], timing: Timing, fd: FD): (Pt & { rest: 
     }
   }
   return out
+}
+
+/** Start of the phase (green or red) the signal at x is in at time t, or 0 if that is earlier. */
+export function phaseStart(x: number, t: number, { C, G, theta }: Timing): number {
+  const g0 = signalAt(x) === 1 ? theta : 0
+  const into = (((t - g0) % C) + C) % C // time since the last green began
+  const start = into < G ? t - into : t - into + G
+  return Math.max(0, start)
 }
