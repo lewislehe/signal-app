@@ -103,3 +103,11 @@ h1 { font-size: 1.4rem; font-weight: normal; margin: 0 0 12px; }
 .slider input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.15); }
 .slider input[type=range]:focus-visible { outline: none; }
 .slider input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(0,114,178,.25); }
+
+/* ---- ring road ---- */
+.ring { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.ring-body { display: flex; gap: 16px; align-items: flex-start; }
+.ring-svg { flex: 0 0 240px; width: 240px; }
+.ring-side { flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; }
+.ring-label { font-size: 12px; fill: rgba(0,0,0,.65); }
+.ring-side .btn { align-self: flex-start; }

@@ -7,6 +7,7 @@ An interactive time–space diagram of a ring with two signals 100 m apart, for 
 - The panel shows the path's ū and r̄, the time on each kind of leg, and its cut q ≤ ū k + r̄ on the FD.
 - White dots on the path (and in the strip under the t axis) mark vehicles passing at each leg's highest rate.
 - Save paths (Enter) to collect cuts; the FD shows their lower envelope. Hover a saved path to see it again.
+- The ring road in the lower right runs Newell's car-following model with the current timing and FD. Its density slider sets the number of cars, and the flow it measures over the last three cycles is plotted as a dot on the FD.
 - Escape cancels the path in progress. Right-click or shift-click the last dot to delete it. Double-click ends a path.
 
 ## Run
@@ -23,5 +24,7 @@ Needs Node 20.19+ (Vite 8). Netlify builds it with `netlify.toml`.
 - `src/TimeSpace.tsx`: the time–space diagram
 - `src/FDPlot.tsx`: the FD with cuts and their lower envelope
 - `src/PathPanel.tsx`: buttons, path measures, saved paths
+- `src/ringsim.ts`: Newell car-following on the ring, with signals and a flow counter
+- `src/RingRoad.tsx`: the animated ring and its density slider
 - `src/Controls.tsx`: sliders
 - `src/App.tsx`: state and layout

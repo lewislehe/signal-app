@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import TimeSpace from './TimeSpace'
 import Controls from './Controls'
 import PathPanel from './PathPanel'
+import RingRoad from './RingRoad'
 import { nextLegs, rbar, ubar, type FD, type Pt } from './model'
 
 type Saved = { id: number; points: Pt[] }
@@ -17,6 +18,9 @@ export default function App() {
   const [saved, setSaved] = useState<Saved[]>([])
   const [nextId, setNextId] = useState(1)
   const [hovered, setHovered] = useState<number | null>(null)
+  const [ringK, setRingK] = useState(40)
+  const [ringQ, setRingQ] = useState<number | null>(null)
+  const onRingFlow = useCallback((q: number | null) => setRingQ(q), [])
 
   const timing = { C, G: ratio * C, theta }
   // While the mouse is over the diagram, measure the path as it would be after a click there.
@@ -96,7 +100,10 @@ export default function App() {
         </div>
         <PathPanel fd={fd} ubar={u} rbar={r} previewing={previewing} saved={savedCuts} hovered={hovered} onHover={setHovered}
           onSave={save} onClear={clear} onClearAll={() => { clear(); setSaved([]); setHovered(null) }} onDelete={(id) => { setSaved((ss) => ss.filter((s) => s.id !== id)); setHovered(null) }}
-          hasPath={points.length > 0} canSave={canSave} />
+          hasPath={points.length > 0} canSave={canSave}
+          ringPoint={ringQ === null ? null : { k: ringK, q: ringQ }}>
+          <RingRoad timing={timing} fd={fd} k={Math.min(ringK, fd.kj)} setK={setRingK} onFlow={onRingFlow} />
+        </PathPanel>
       </div>
     </div>
   )

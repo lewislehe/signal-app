@@ -25,10 +25,11 @@ type Props = {
   saved: (Cut & { id: number })[]
   hovered: number | null
   onHover: (id: number | null) => void
+  ringPoint?: { k: number; q: number } | null // flow measured on the animated ring
 }
 
 /** The triangular FD in (k, q), with the cuts q = ū k + r̄ of the current and saved paths. */
-export default function FDPlot({ fd, cut, saved, hovered, onHover }: Props) {
+export default function FDPlot({ fd, cut, saved, hovered, onHover, ringPoint }: Props) {
   const km = kM(fd), qm = qM(fd), wkj = fd.w * fd.kj
   const KMAX = fd.kj * 1.06
   const QMAX = Math.max(qm, wkj) * 1.08
@@ -85,6 +86,14 @@ export default function FDPlot({ fd, cut, saved, hovered, onHover }: Props) {
           <line {...cutLine(cut)} stroke={PATH} strokeWidth={2.4} strokeLinecap="round" pointerEvents="none" />
         )}
       </g>
+
+      {/* the flow measured on the animated ring */}
+      {ringPoint && (
+        <g pointerEvents="none">
+          <circle cx={sx(ringPoint.k)} cy={sy(ringPoint.q)} r={4.2} fill="black" stroke="white" strokeWidth={1.4} />
+          <text x={sx(ringPoint.k) + 6} y={sy(ringPoint.q) - 6} className="tick">ring</text>
+        </g>
+      )}
 
       {/* the current cut's slope is ū */}
       {cut && (() => {

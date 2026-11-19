@@ -15,6 +15,8 @@ type Props = {
   hasPath: boolean
   canSave: boolean
   previewing: boolean // measures include the legs the next click would add
+  ringPoint: { k: number; q: number } | null
+  children?: React.ReactNode
 }
 
 const s1 = (v: number) => v.toFixed(1).replace('-', '−')
@@ -29,7 +31,7 @@ export default function PathPanel(p: Props) {
   const cut = ubar !== null && rbar ? { u: ubar, r: rbar.r } : null
   return (
     <div className={`path-panel${p.previewing ? ' previewing' : ''}`}>
-      <FDPlot fd={p.fd} cut={cut} saved={p.saved} hovered={p.hovered} onHover={p.onHover} />
+      <FDPlot fd={p.fd} cut={cut} saved={p.saved} hovered={p.hovered} onHover={p.onHover} ringPoint={p.ringPoint} />
 
       <div className="buttons">
         <button className="btn primary" onClick={p.onSave} disabled={!p.canSave}>
@@ -80,6 +82,8 @@ export default function PathPanel(p: Props) {
           </ul>
         </>
       )}
+
+      {p.children}
     </div>
   )
 }

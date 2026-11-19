@@ -10,7 +10,7 @@ type SliderProps = {
   onChange: (v: number) => void
 }
 
-function Slider({ label, value, min, max, step, shown, onChange }: SliderProps) {
+export function Slider({ label, value, min, max, step, shown, onChange }: SliderProps) {
   return (
     <label className="slider">
       <div className="slider-head">
