@@ -11,7 +11,7 @@ const PATH = 'rgb(0,114,178)'
 const SAVED = 'rgb(120,80,160)'
 
 const VW = 1040
-const VH = 632
+const VH = 700
 const M = { l: 66, r: 86, t: 16, b: 88 }
 const STRIP_Y = VH - 18 // the row of passing vehicles, under the t axis
 const PW = VW - M.l - M.r

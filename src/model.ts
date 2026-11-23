@@ -4,8 +4,8 @@ export const L = 100
 
 export const T_MAX = 150 // s, right end of the time axis
 export const X_MIN = -25
-export const X_MAX = 540
-export const SIGNAL_XS = [0, 100, 200, 300, 400, 500]
+export const X_MAX = 640
+export const SIGNAL_XS = [0, 100, 200, 300, 400, 500, 600]
 
 export type Pt = { t: number; x: number }
 export type Timing = { C: number; G: number; theta: number }
